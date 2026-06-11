@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚽ Polla Mundialista 2026</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Auth Section -->
+    <div id="auth-section" class="section">
+      <div class="auth-container">
+        <h1>⚽ Polla Mundialista 2026</h1>
+        <p class="subtitle">🇺🇸 🇲🇽 🇨🇦</p>
+        <div class="tabs">
+          <button class="tab active" onclick="showTab('login')">Iniciar Sesión</button>
+          <button class="tab" onclick="showTab('register')">Registrarse</button>
+        </div>
+        <form id="login-form" onsubmit="login(event)">
+          <input type="text" id="login-user" placeholder="Usuario" required autocomplete="username">
+          <input type="password" id="login-pass" placeholder="Contraseña" required autocomplete="current-password">
+          <button type="submit" class="btn primary">Entrar</button>
+        </form>
+        <form id="register-form" style="display:none" onsubmit="register(event)">
+          <input type="text" id="reg-user" placeholder="Usuario (mín. 3 caracteres)" required autocomplete="username">
+          <input type="password" id="reg-pass" placeholder="Contraseña (mín. 4 caracteres)" required autocomplete="new-password">
+          <button type="submit" class="btn primary">Crear Cuenta</button>
+        </form>
+        <p id="auth-error" class="error"></p>
+      </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="main-section" class="section" style="display:none">
+      <header>
+        <h1>⚽ Polla Mundialista 2026</h1>
+        <div class="header-info">
+          <span id="user-greeting"></span>
+          <button class="btn small" onclick="logout()">Salir</button>
+        </div>
+      </header>
+
+      <nav>
+        <button class="nav-btn active" onclick="navigateTo('standings')">🏆 Tabla</button>
+        <button class="nav-btn" onclick="navigateTo('matches')">📋 Partidos</button>
+        <button class="nav-btn" onclick="navigateTo('predictions')">🎯 Mis Pronósticos</button>
+        <button class="nav-btn admin-only" onclick="navigateTo('admin')" style="display:none">⚙️ Admin</button>
+      </nav>
+
+      <!-- Standings View -->
+      <div id="view-standings" class="view">
+        <h2>🏆 Tabla de Posiciones</h2>
+        <table class="standings-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Jugador</th>
+              <th>Pts</th>
+              <th>Exactos</th>
+              <th>Aciertos</th>
+              <th>Pronósticos</th>
+            </tr>
+          </thead>
+          <tbody id="standings-body"></tbody>
+        </table>
+      </div>
+
+      <!-- Matches View -->
+      <div id="view-matches" class="view" style="display:none">
+        <h2>📋 Partidos - Fase de Grupos</h2>
+        <div class="group-filter">
+          <label>Filtrar por grupo:</label>
+          <select id="group-select" onchange="loadMatches()">
+            <option value="">Todos</option>
+            <option value="A">Grupo A</option>
+            <option value="B">Grupo B</option>
+            <option value="C">Grupo C</option>
+            <option value="D">Grupo D</option>
+            <option value="E">Grupo E</option>
+            <option value="F">Grupo F</option>
+            <option value="G">Grupo G</option>
+            <option value="H">Grupo H</option>
+            <option value="I">Grupo I</option>
+            <option value="J">Grupo J</option>
+            <option value="K">Grupo K</option>
+            <option value="L">Grupo L</option>
+          </select>
+        </div>
+        <div id="matches-list"></div>
+      </div>
+
+      <!-- Predictions View -->
+      <div id="view-predictions" class="view" style="display:none">
+        <h2>🎯 Mis Pronósticos</h2>
+        <div id="predictions-list"></div>
+      </div>
+
+      <!-- Admin View -->
+      <div id="view-admin" class="view" style="display:none">
+        <h2>⚙️ Panel de Administración</h2>
+        <h3>Cargar Resultados</h3>
+        <div class="group-filter">
+          <label>Filtrar por grupo:</label>
+          <select id="admin-group-select" onchange="loadAdminMatches()">
+            <option value="">Todos</option>
+            <option value="A">Grupo A</option>
+            <option value="B">Grupo B</option>
+            <option value="C">Grupo C</option>
+            <option value="D">Grupo D</option>
+            <option value="E">Grupo E</option>
+            <option value="F">Grupo F</option>
+            <option value="G">Grupo G</option>
+            <option value="H">Grupo H</option>
+            <option value="I">Grupo I</option>
+            <option value="J">Grupo J</option>
+            <option value="K">Grupo K</option>
+            <option value="L">Grupo L</option>
+          </select>
+        </div>
+        <div id="admin-matches-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

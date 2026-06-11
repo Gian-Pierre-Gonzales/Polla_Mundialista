@@ -1,0 +1,4 @@
+node_modules/
+polla.db
+sessions.db
+*.log

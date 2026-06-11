@@ -1,0 +1,19 @@
+{
+  "name": "polla-mundialista-2026",
+  "version": "1.0.0",
+  "description": "Polla mundialista entre amigos - Mundial 2026",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "setup": "node setup-db.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "express": "4.21.2",
+    "sql.js": "1.11.0",
+    "bcryptjs": "2.4.3",
+    "express-session": "1.18.1"
+  }
+}
