@@ -1,14 +1,15 @@
-const initSqlJs = require('sql.js');
+const { createClient } = require('@libsql/client');
 const bcrypt = require('bcryptjs');
-const fs = require('fs');
-const path = require('path');
+require('dotenv').config();
 
 async function setup() {
-  const SQL = await initSqlJs();
-  const db = new SQL.Database();
+  const db = createClient({
+    url: process.env.TURSO_DATABASE_URL,
+    authToken: process.env.TURSO_AUTH_TOKEN,
+  });
 
   // Create tables
-  db.run(`
+  await db.execute(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       username TEXT UNIQUE NOT NULL,
@@ -18,7 +19,7 @@ async function setup() {
     )
   `);
 
-  db.run(`
+  await db.execute(`
     CREATE TABLE IF NOT EXISTS matches (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       group_name TEXT NOT NULL,
@@ -34,7 +35,7 @@ async function setup() {
     )
   `);
 
-  db.run(`
+  await db.execute(`
     CREATE TABLE IF NOT EXISTS predictions (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
@@ -51,12 +52,13 @@ async function setup() {
 
   // Create admin user (password: admin123)
   const adminPassword = bcrypt.hashSync('admin123', 10);
-  db.run('INSERT OR IGNORE INTO users (username, password, is_admin) VALUES (?, ?, ?)',
-    ['admin', adminPassword, 1]);
+  await db.execute({
+    sql: 'INSERT OR IGNORE INTO users (username, password, is_admin) VALUES (?, ?, ?)',
+    args: ['admin', adminPassword, 1]
+  });
 
   // Insert all group stage matches - World Cup 2026
   const matches = [
-    // Matchday 1
     ['A', 'México', 'Sudáfrica', '2026-06-11', '15:00', 'Estadio Azteca, Ciudad de México'],
     ['A', 'Corea del Sur', 'Chequia', '2026-06-11', '22:00', 'Estadio Akron, Guadalajara'],
     ['B', 'Canadá', 'Bosnia y Herzegovina', '2026-06-12', '15:00', 'BMO Field, Toronto'],
@@ -81,8 +83,6 @@ async function setup() {
     ['L', 'Inglaterra', 'Croacia', '2026-06-17', '16:00', 'AT&T Stadium, Dallas'],
     ['L', 'Ghana', 'Panamá', '2026-06-17', '19:00', 'BMO Field, Toronto'],
     ['K', 'Uzbekistán', 'Colombia', '2026-06-17', '22:00', 'Estadio Azteca, Ciudad de México'],
-
-    // Matchday 2
     ['A', 'Chequia', 'Sudáfrica', '2026-06-18', '12:00', 'Mercedes-Benz Stadium, Atlanta'],
     ['B', 'Suiza', 'Bosnia y Herzegovina', '2026-06-18', '15:00', 'SoFi Stadium, Los Ángeles'],
     ['B', 'Canadá', 'Qatar', '2026-06-18', '18:00', 'BC Place, Vancouver'],
@@ -107,8 +107,6 @@ async function setup() {
     ['L', 'Inglaterra', 'Ghana', '2026-06-23', '16:00', 'Gillette Stadium, Boston'],
     ['L', 'Panamá', 'Croacia', '2026-06-23', '19:00', 'BMO Field, Toronto'],
     ['K', 'Colombia', 'R.D. Congo', '2026-06-23', '22:00', 'Estadio Akron, Guadalajara'],
-
-    // Matchday 3
     ['B', 'Suiza', 'Canadá', '2026-06-24', '15:00', 'BC Place, Vancouver'],
     ['B', 'Bosnia y Herzegovina', 'Qatar', '2026-06-24', '15:00', 'Lumen Field, Seattle'],
     ['C', 'Escocia', 'Brasil', '2026-06-24', '18:00', 'Hard Rock Stadium, Miami'],
@@ -135,24 +133,26 @@ async function setup() {
     ['J', 'Jordania', 'Argentina', '2026-06-27', '22:00', 'AT&T Stadium, Dallas'],
   ];
 
-  const stmt = db.prepare('INSERT INTO matches (group_name, team_a, team_b, date, time_et, venue, stage) VALUES (?, ?, ?, ?, ?, ?, ?)');
-  for (const m of matches) {
-    stmt.run([...m, 'group']);
+  // Check if matches already exist
+  const existing = await db.execute('SELECT COUNT(*) as count FROM matches');
+  if (existing.rows[0].count === 0) {
+    for (const m of matches) {
+      await db.execute({
+        sql: 'INSERT INTO matches (group_name, team_a, team_b, date, time_et, venue, stage) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        args: [...m, 'group']
+      });
+    }
+    console.log(`   - ${matches.length} partidos de fase de grupos insertados`);
+  } else {
+    console.log(`   - Partidos ya existentes (${existing.rows[0].count}), no se insertan duplicados`);
   }
-  stmt.free();
 
-  // Save to file
-  const dbPath = process.env.DB_PATH || path.join(__dirname, 'polla.db');
-  const data = db.export();
-  const buffer = Buffer.from(data);
-  fs.writeFileSync(dbPath, buffer);
-
-  db.close();
-
-  console.log('✅ Base de datos creada exitosamente');
-  console.log(`   - ${matches.length} partidos de fase de grupos insertados`);
+  console.log('✅ Base de datos configurada exitosamente');
   console.log('   - Usuario admin creado (usuario: admin, contraseña: admin123)');
-  console.log('\nPara iniciar el servidor ejecuta: npm start');
 }
 
-setup().catch(console.error);
+setup().catch(err => {
+  console.error('❌ Error:', err.message);
+  console.error('   Asegúrate de configurar TURSO_DATABASE_URL y TURSO_AUTH_TOKEN');
+  process.exit(1);
+});

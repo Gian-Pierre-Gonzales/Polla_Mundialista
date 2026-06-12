@@ -377,3 +377,71 @@ function escapeHtml(str) {
 
 // Init
 checkAuth();
+
+
+// ==================== LEGAL ====================
+
+const legalContent = {
+  aviso: `
+    <h2>Aviso Legal</h2>
+    <h3>Datos de identificación</h3>
+    <p><strong>Propietario:</strong> Gian Pierre Gonzales</p>
+    <p><strong>Sitio web:</strong> Culecas FC - Polla Mundialista 2026</p>
+    <p><strong>Finalidad:</strong> Plataforma de entretenimiento para pronósticos deportivos entre amigos, sin ánimo de lucro ni apuestas con dinero real.</p>
+    <h3>Propiedad intelectual</h3>
+    <p>El contenido de este sitio web, incluyendo diseño, logotipos y código fuente, es propiedad de Gian Pierre Gonzales. Los nombres de equipos y competiciones pertenecen a sus respectivos titulares.</p>
+    <h3>Limitación de responsabilidad</h3>
+    <p>Este sitio se ofrece con fines de entretenimiento. El propietario no se responsabiliza por el uso indebido de la plataforma ni por interrupciones del servicio.</p>
+  `,
+  privacidad: `
+    <h2>Política de Privacidad y Cookies</h2>
+    <h3>Datos que recopilamos</h3>
+    <ul>
+      <li>Nombre de usuario (elegido por el usuario)</li>
+      <li>Contraseña (almacenada de forma encriptada)</li>
+      <li>Pronósticos realizados dentro de la plataforma</li>
+    </ul>
+    <h3>Finalidad del tratamiento</h3>
+    <p>Los datos se utilizan exclusivamente para el funcionamiento de la polla mundialista: identificar usuarios, registrar pronósticos y calcular puntuaciones.</p>
+    <h3>Cookies</h3>
+    <p>Este sitio utiliza únicamente cookies de sesión necesarias para mantener tu sesión iniciada. No utilizamos cookies de seguimiento, analítica ni publicidad.</p>
+    <h3>Compartición de datos</h3>
+    <p>No compartimos, vendemos ni cedemos datos personales a terceros.</p>
+    <h3>Derechos del usuario</h3>
+    <p>Puedes solicitar la eliminación de tu cuenta y datos contactando al administrador.</p>
+  `,
+  terminos: `
+    <h2>Términos y Condiciones</h2>
+    <h3>Objeto</h3>
+    <p>Esta plataforma permite a un grupo de amigos realizar pronósticos sobre los resultados de partidos del Mundial 2026 con fines de entretenimiento.</p>
+    <h3>Reglas del juego</h3>
+    <ul>
+      <li>Resultado exacto: 3 puntos</li>
+      <li>Acertar ganador o empate: 1 punto</li>
+      <li>Fallo: 0 puntos</li>
+      <li>Los pronósticos deben realizarse antes del inicio de cada partido</li>
+      <li>No se permiten modificaciones después del inicio del partido</li>
+    </ul>
+    <h3>Uso aceptable</h3>
+    <ul>
+      <li>No se permite el uso de múltiples cuentas</li>
+      <li>No se permiten nombres de usuario ofensivos</li>
+      <li>Esta plataforma no involucra apuestas con dinero real</li>
+    </ul>
+    <h3>Modificaciones</h3>
+    <p>El administrador se reserva el derecho de modificar estas condiciones, las reglas de puntuación o la disponibilidad del servicio en cualquier momento.</p>
+    <h3>Aceptación</h3>
+    <p>Al registrarte y usar esta plataforma, aceptas estos términos y condiciones.</p>
+  `
+};
+
+function showLegal(type) {
+  document.getElementById('legal-body').innerHTML = legalContent[type];
+  document.getElementById('legal-modal').style.display = 'flex';
+}
+
+function closeLegalModal(event) {
+  if (event.target === document.getElementById('legal-modal')) {
+    document.getElementById('legal-modal').style.display = 'none';
+  }
+}

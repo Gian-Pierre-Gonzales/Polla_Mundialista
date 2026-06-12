@@ -128,6 +128,26 @@
     </div>
   </div>
 
+  <footer class="site-footer">
+    <div class="footer-content">
+      <p class="footer-dev">Desarrollado por <strong>Gian Pierre Gonzales</strong></p>
+      <div class="footer-links">
+        <a href="#" onclick="showLegal('aviso')">Aviso Legal</a>
+        <a href="#" onclick="showLegal('privacidad')">Política de Privacidad y Cookies</a>
+        <a href="#" onclick="showLegal('terminos')">Términos y Condiciones</a>
+      </div>
+      <p class="footer-copy">&copy; 2026 Culecas FC. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Modal Legal -->
+  <div id="legal-modal" class="modal" style="display:none" onclick="closeLegalModal(event)">
+    <div class="modal-content">
+      <button class="modal-close" onclick="document.getElementById('legal-modal').style.display='none'">&times;</button>
+      <div id="legal-body"></div>
+    </div>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>
